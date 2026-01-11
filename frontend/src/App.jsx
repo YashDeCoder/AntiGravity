@@ -21,7 +21,7 @@ const App = () => {
       const response = await axios.get(`http://localhost:8000/houses`, {
         params: {
           max_budget: maxBudget,
-          max_duration: maxDuration,
+          max_duration: maxDuration > 0 ? maxDuration : null,
           source: selectedSource
         }
       });
@@ -130,6 +130,7 @@ const App = () => {
                   <option value="all">All Sources</option>
                   <option value="Funda">Funda</option>
                   <option value="Verhuurtbeter">Verhuurtbeter</option>
+                  <option value="Pararius">Pararius</option>
                 </select>
               </div>
 

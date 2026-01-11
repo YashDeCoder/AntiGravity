@@ -33,14 +33,14 @@ const HousingCard = ({ house }) => {
                         <Clock size={16} className="text-accent-secondary" />
                         <div className="flex flex-col">
                             <span className="text-xs text-text-muted">Travel</span>
-                            <span className="text-sm font-medium">{travel_data.duration_mins} min</span>
+                            <span className="text-sm font-medium">{travel_data.duration_minutes} min</span>
                         </div>
                     </div>
                     <div className="bg-bg-tertiary/50 rounded-xl p-2 flex items-center gap-2">
-                        <TrendingUp size={16} className="text-accent-success" />
+                        <MapPin size={16} className="text-accent-success" />
                         <div className="flex flex-col">
-                            <span className="text-xs text-text-muted">Dist.</span>
-                            <span className="text-sm font-medium">{travel_data.distance_km} km</span>
+                            <span className="text-xs text-text-muted">From</span>
+                            <span className="text-sm font-medium truncate max-w-[80px]">{travel_data.from_station}</span>
                         </div>
                     </div>
                 </div>
