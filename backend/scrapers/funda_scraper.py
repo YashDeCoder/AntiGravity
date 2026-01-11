@@ -31,13 +31,33 @@ class FundaScraperService:
             )
             
             for listing in listings:
-                # get all listing details and convert url key to link
-                listing_details = self.scraper.get_listing(listing.listing_id)
-                listing_details.data["link"] = listing_details.data["url"]
-                listing_details.data["location"] = listing_details.data["city"]
-                listing_details.data["source"] = "Funda"
+                # get all listing details
+                details = self.scraper.get_listing(listing.listing_id).to_dict()
                 
-                all_results.append(listing_details.to_dict())
+                # Standardized core fields
+                location = details.get('city', '')
+                
+                # Consolidate extra info (everything not in core)
+                core_keys = {'title', 'price', 'url', 'photos', 'latitude', 'longitude'}
+                extra = {k: v for k, v in details.items() if k not in core_keys}
+
+                result = {
+                    "title": details.get('title'),
+                    "price": details.get('price'),
+                    "location": location,
+                    "link": details.get('url'),
+                    "source": "Funda",
+                    "type": self.want_to,
+                    "media": details.get('photos'),
+                    "extra": extra
+                }
+                
+                # Add lat/lon directly if available
+                if 'latitude' in details and 'longitude' in details:
+                    result['lat'] = details['latitude']
+                    result['lon'] = details['longitude']
+                
+                all_results.append(result)
                 
         return all_results
 

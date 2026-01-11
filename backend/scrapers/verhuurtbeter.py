@@ -45,12 +45,22 @@ class VerhuurtbeterScraperService:
                     if not link.startswith("http"):
                         link = "https://verhuurtbeter.nl" + link
 
+                media = []
+                img_elem = card.select_one(".object-thumb img")
+                if img_elem and img_elem.get("src"):
+                    media = [img_elem["src"]]
+
                 listings.append({
                     "title": title,
                     "price": int(price) if price else 0,
                     "location": location,
                     "link": link,
-                    "source": "Verhuurtbeter"
+                    "type": "rent",
+                    "media": media,
+                    "source": "Verhuurtbeter",
+                    "extra": {
+                        "price_text": price_text
+                    }
                 })
                 
             return listings

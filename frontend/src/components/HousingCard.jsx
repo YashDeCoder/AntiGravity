@@ -2,19 +2,30 @@ import React from 'react';
 import { Home, MapPin, Clock, ExternalLink, TrendingUp } from 'lucide-react';
 
 const HousingCard = ({ house }) => {
-    const { title, price, location, travel_data, source, link } = house;
+    const { title, price, location, travel_data, source, link, media } = house;
 
     return (
         <div className="glass rounded-2xl p-4 card-hover overflow-hidden flex flex-col gap-4 border border-border-color">
             <div className="relative h-48 -mx-4 -mt-4 bg-tertiary/50 overflow-hidden group">
+                {media && media.length > 0 ? (
+                    <img
+                        src={media[0]}
+                        alt={title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-bg-tertiary">
+                        <Home size={40} className="text-text-muted opacity-20" />
+                    </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute top-3 left-3 bg-accent-primary/80 backdrop-blur-md px-2 py-1 rounded-lg text-xs font-semibold text-white uppercase tracking-wider">
                     {source}
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
                     <div className="flex flex-col">
-                        <span className="text-2xl font-bold">€{price.toLocaleString()}</span>
-                        <span className="text-xs text-text-secondary">per maand</span>
+                        <span className="text-2xl font-bold text-white">€{price.toLocaleString()}</span>
+                        <span className="text-xs text-white/80">per maand</span>
                     </div>
                 </div>
             </div>

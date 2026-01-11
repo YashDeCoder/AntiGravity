@@ -41,7 +41,12 @@ class ParariusScraperService:
                     "price": int(price) if price else 0,
                     "location": location,
                     "link": link,
-                    "source": "Pararius"
+                    "source": "Pararius",
+                    "type": "rent", # Pararius is primarily rent
+                    "media": [],    # Could be enhanced to scrape thumbnails
+                    "extra": {
+                        "price_text": price_text
+                    }
                 })
                 
             return listings
