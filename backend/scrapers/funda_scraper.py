@@ -21,21 +21,29 @@ class FundaScraperService:
         """
         all_results = []
         for n in range(0, self.n_pages):
-            list_listings = self.scraper.search_listing(
+            # Funda-scraper's search_listing returns a list of Listing objects
+            listings = self.scraper.search_listing(
                 offering_type=self.want_to,
                 price_max=self.max_budget,
                 sort=self.sort_by,
                 page=n,
                 location=self.area,
             )
-            all_results.extend(list_listings)
+            
+            for listing in listings:
+                # get all listing details and convert url key to link
+                listing_details = self.scraper.get_listing(listing.listing_id)
+                listing_details.data["link"] = listing_details.data["url"]
+                listing_details.data["location"] = listing_details.data["city"]
+                listing_details.data["source"] = "Funda"
+                
+                all_results.append(listing_details.to_dict())
+                
         return all_results
 
 if __name__ == "__main__":
     # Test run
-    scraper = FundaScraperService(area="utrecht", want_to="rent", n_pages=2)
+    scraper = FundaScraperService(area="amsterdam", want_to="rent", n_pages=1, max_budget=2000)
     data = scraper.scrape()
     print(f"Scraped {len(data)} results from Funda.")
-    if data:
-        for r in data:
-            print(r['price'], r['location'])
+    print(data)

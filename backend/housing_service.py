@@ -57,13 +57,17 @@ class HousingService:
             
         return {"scraped": len(all_results), "new": processed_count}
 
-    async def get_filtered_houses(self, max_budget: int = None, max_duration: float = None):
+    async def get_filtered_houses(self, max_budget: int = None, max_duration: float = None, source: str = None):
         """
         Retrieves houses from DB with filtering.
         """
         query = {}
         if max_budget:
             query["price"] = {"$lte": max_budget}
+        
+        if source and source.lower() != "all":
+            # Using case-insensitive regex for source just in case
+            query["source"] = {"$regex": f"^{source}$", "$options": "i"}
             
         houses = await self.db.houses.find(query).to_list(100)
         

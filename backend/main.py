@@ -39,9 +39,14 @@ async def trigger_scrape(city: str = "amsterdam"):
 @app.get("/houses")
 async def get_houses(
     max_budget: Optional[int] = Query(None, description="Maximum monthly rent"),
-    max_duration: Optional[float] = Query(None, description="Maximum travel duration in minutes")
+    max_duration: Optional[float] = Query(None, description="Maximum travel duration in minutes"),
+    source: Optional[str] = Query(None, description="Filter by listing source")
 ):
-    houses = await housing_service.get_filtered_houses(max_budget=max_budget, max_duration=max_duration)
+    houses = await housing_service.get_filtered_houses(
+        max_budget=max_budget, 
+        max_duration=max_duration,
+        source=source
+    )
     return houses
 
 @app.post("/test-distance")

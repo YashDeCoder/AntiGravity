@@ -11,8 +11,9 @@ const App = () => {
   const [scanning, setScanning] = useState(false);
 
   // Filters
-  const [maxBudget, setMaxBudget] = useState(2000);
+  const [maxBudget, setMaxBudget] = useState(1250);
   const [maxDuration, setMaxDuration] = useState(30);
+  const [selectedSource, setSelectedSource] = useState('all');
 
   const fetchHouses = async () => {
     setLoading(true);
@@ -20,7 +21,8 @@ const App = () => {
       const response = await axios.get(`http://localhost:8000/houses`, {
         params: {
           max_budget: maxBudget,
-          max_duration: maxDuration
+          max_duration: maxDuration,
+          source: selectedSource
         }
       });
       setHouses(response.data);
@@ -45,7 +47,7 @@ const App = () => {
 
   useEffect(() => {
     fetchHouses();
-  }, [maxBudget, maxDuration]);
+  }, [maxBudget, maxDuration, selectedSource]);
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary flex">
@@ -65,8 +67,8 @@ const App = () => {
                   onClick={startScrape}
                   disabled={scanning}
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${scanning
-                      ? 'bg-bg-secondary text-text-muted cursor-not-allowed'
-                      : 'bg-glass text-text-primary border border-glass-border hover:bg-bg-tertiary'
+                    ? 'bg-bg-secondary text-text-muted cursor-not-allowed'
+                    : 'bg-glass text-text-primary border border-glass-border hover:bg-bg-tertiary'
                     }`}
                 >
                   <RefreshCw size={20} className={scanning ? 'animate-spin' : ''} />
@@ -107,7 +109,7 @@ const App = () => {
                   <input
                     type="range"
                     min="5"
-                    max="60"
+                    max="120"
                     step="5"
                     value={maxDuration}
                     onChange={(e) => setMaxDuration(Number(e.target.value))}
@@ -115,6 +117,20 @@ const App = () => {
                   />
                   <span className="text-sm font-medium w-16">{maxDuration} min</span>
                 </div>
+              </div>
+              <div className="flex flex-col gap-2 min-w-[150px]">
+                <label className="text-xs font-semibold uppercase tracking-widest text-text-muted flex items-center gap-2">
+                  <LayoutGrid size={14} /> Source
+                </label>
+                <select
+                  value={selectedSource}
+                  onChange={(e) => setSelectedSource(e.target.value)}
+                  className="bg-bg-tertiary text-text-primary text-sm rounded-lg border-none focus:ring-1 focus:ring-accent-primary p-2 cursor-pointer transition-all hover:bg-bg-secondary"
+                >
+                  <option value="all">All Sources</option>
+                  <option value="Funda">Funda</option>
+                  <option value="Verhuurtbeter">Verhuurtbeter</option>
+                </select>
               </div>
 
               <div className="flex-1" />
