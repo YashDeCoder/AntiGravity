@@ -17,7 +17,7 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt  # Or manually install FastAPI, Uvicorn, Motor, etc.
-python main.py
+python backend/main.py
 ```
 *Make sure to configure your `.env` file in the backend directory.*
 
