@@ -32,8 +32,8 @@ async def health_check():
     return {"status": "healthy"}
 
 @app.post("/scrape")
-async def trigger_scrape(city: str = "amsterdam"):
-    result = await housing_service.run_all_scrapers(city=city)
+async def trigger_scrape(target: str = "Hoekenrode 10A, 1101 DT Amsterdam", buy: bool = False):
+    result = await housing_service.run_all_scrapers(target=target, buy=buy)
     return result
 
 @app.get("/houses")

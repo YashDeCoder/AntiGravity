@@ -7,8 +7,6 @@ load_dotenv()
 
 ORS_API_KEY = os.getenv("ORS_API_KEY")
 NS_API_KEY = os.getenv("NS_API_KEY")
-TARGET_LAT = float(os.getenv("TARGET_LOCATION_LAT", "52.3676"))
-TARGET_LON = float(os.getenv("TARGET_LOCATION_LON", "4.9041"))
 
 def geocode_address(address: str):
     """
@@ -36,9 +34,9 @@ def geocode_address(address: str):
         print(f"Geocoding error for {address}: {e}")
     return None
 
-def get_travel_data(house_lat, house_lon):
+def get_travel_data(house_lat, house_lon, dest_uic_code=None):
     """
-    Calculates travel duration from nearest station to Bijlmer ArenA.
+    Calculates travel duration from nearest station of a house to a destination station.
     """
     if not NS_API_KEY:
         return {"error": "NS_API_KEY not configured"}
@@ -58,7 +56,6 @@ def get_travel_data(house_lat, house_lon):
         workday += timedelta(days=2 - workday.weekday())
     workday = workday.strftime("%Y-%m-%dT%H:%M:%S")
 
-    # Bijlmer ArenA UICCode is 8400074
     distance_url = f"https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips"
 
     headers = {
@@ -69,7 +66,7 @@ def get_travel_data(house_lat, house_lon):
 
     params = {
         "originUicCode": closest_station_uicCode,
-        "destinationUicCode": 8400074,
+        "destinationUicCode": target_uic,
         "dateTime": workday
     }
 

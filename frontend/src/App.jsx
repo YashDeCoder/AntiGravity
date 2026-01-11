@@ -14,6 +14,8 @@ const App = () => {
   const [maxBudget, setMaxBudget] = useState(1250);
   const [maxDuration, setMaxDuration] = useState(30);
   const [selectedSource, setSelectedSource] = useState('all');
+  const [showBuy, setShowBuy] = useState(false);
+  const [address, setAddress] = useState('Hoekenrode 10A, 1101 DT Amsterdam');
 
   const fetchHouses = async () => {
     setLoading(true);
@@ -22,7 +24,9 @@ const App = () => {
         params: {
           max_budget: maxBudget,
           max_duration: maxDuration > 0 ? maxDuration : null,
-          source: selectedSource
+          source: selectedSource,
+          show_buy: showBuy,
+          address: address
         }
       });
       setHouses(response.data);
@@ -47,7 +51,7 @@ const App = () => {
 
   useEffect(() => {
     fetchHouses();
-  }, [maxBudget, maxDuration, selectedSource]);
+  }, [maxBudget, maxDuration, selectedSource, showBuy, address]);
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary flex">
@@ -132,6 +136,30 @@ const App = () => {
                   <option value="Verhuurtbeter">Verhuurtbeter</option>
                   <option value="Pararius">Pararius</option>
                 </select>
+              </div>
+
+              <div className="flex flex-col gap-2 min-w-[150px]">
+                <label className="text-xs font-semibold uppercase tracking-widest text-text-muted flex items-center gap-2">
+                  <LayoutGrid size={14} /> Address
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="bg-bg-tertiary text-text-primary text-sm rounded-lg border-none focus:ring-1 focus:ring-accent-primary p-2 cursor-pointer transition-all hover:bg-bg-secondary"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2 min-w-[150px]">
+                <label className="text-xs font-semibold uppercase tracking-widest text-text-muted flex items-center gap-2">
+                  <LayoutGrid size={14} /> Show Buy
+                </label>
+                <input
+                  type="checkbox"
+                  checked={showBuy}
+                  onChange={(e) => setShowBuy(e.target.checked)}
+                  className="bg-bg-tertiary text-text-primary text-sm rounded-lg border-none focus:ring-1 focus:ring-accent-primary p-2 cursor-pointer transition-all hover:bg-bg-secondary"
+                />
               </div>
 
               <div className="flex-1" />

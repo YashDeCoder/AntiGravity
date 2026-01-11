@@ -1,7 +1,7 @@
 from scrapers.funda_scraper import FundaScraperService  
 from scrapers.pararius import ParariusScraperService
 from scrapers.verhuurtbeter import VerhuurtbeterScraperService
-from distance_service import get_travel_data, geocode_address
+from distance_service import get_travel_data, geocode_address, get_closest_station
 from database import get_database
 import asyncio
 
@@ -9,17 +9,27 @@ class HousingService:
     def __init__(self):
         self.db = get_database()
 
-    async def run_all_scrapers(self, city: str):
+    async def run_all_scrapers(self, target: str = "Hoekenrode 10A, 1101 DT Amsterdam", buy: bool = False):
         """
         Runs all scrapers, calculates travel data, and saves to DB.
         """
+        # Resolve target station UIC code once
+        dest_uic = None
+        target_coords = await asyncio.to_thread(geocode_address, target)
+        if target_coords:
+            target_station = await asyncio.to_thread(get_closest_station, target_coords["lat"], target_coords["lon"])
+            if "error" not in target_station:
+                dest_uic = target_station["closest_station_uicCode"]
+        
         scrapers = [
             FundaScraperService(want_to="rent"),
-            FundaScraperService(want_to="buy", max_budget=225000),
             # ParariusScraperService(city=city),
             # VerhuurtbeterScraperService()
         ]
         
+        if buy:
+            scrapers.append(FundaScraperService(want_to="buy", max_budget=225000))
+
         all_results = []
         
         for s in scrapers:
@@ -48,7 +58,7 @@ class HousingService:
             
             # Calculate travel info if coordinates exist
             if "lat" in house and "lon" in house:
-                travel_info = await asyncio.to_thread(get_travel_data, house["lat"], house["lon"])
+                travel_info = await asyncio.to_thread(get_travel_data, house["lat"], house["lon"], dest_uic)
                 if travel_info and "error" not in travel_info:
                     house["travel_data"] = travel_info
             
@@ -67,13 +77,13 @@ class HousingService:
         
         if source and source.lower() != "all":
             # Using case-insensitive regex for source just in case
-            query["source"] = {"$regex": f"^{source}$", "$options": "i"}
+            query["source"] = source
             
         houses = await self.db.houses.find(query).to_list(100)
         
         # In-memory duration filtering if it's not indexed/stored in a way that Mongo likes
         if max_duration:
-            houses = [h for h in houses if h.get("travel_data", {}).get("duration_mins", 999) <= max_duration]
+            houses = [h for h in houses if h.get("travel_data", {}).get("duration_minutes", 999) <= max_duration]
             
         for h in houses:
             h["_id"] = str(h["_id"])
