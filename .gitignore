@@ -1,2 +1,5 @@
 .venv
 backend/.env
+analysis.py
+backend/__pycache__
+backend/scrapers/__pycache__

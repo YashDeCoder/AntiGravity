@@ -1,6 +1,7 @@
 from scrapers.funda_scraper import FundaScraperService  
 from scrapers.pararius import ParariusScraperService
 from scrapers.verhuurtbeter import VerhuurtbeterScraperService
+from scrapers.vesteda import VestedaScraperService
 from distance_service import get_travel_data, geocode_address, get_closest_station
 from database import get_database
 import asyncio
@@ -23,8 +24,10 @@ class HousingService:
         
         scrapers = [
             FundaScraperService(want_to="rent"),
+            # FundaScraperService(want_to="buy"),
             # ParariusScraperService(city=city),
-            # VerhuurtbeterScraperService()
+            # VerhuurtbeterScraperService(),
+            VestedaScraperService(),
         ]
         
         if buy:
@@ -81,9 +84,10 @@ class HousingService:
             
         houses = await self.db.houses.find(query).to_list(100)
         
-        # In-memory duration filtering if it's not indexed/stored in a way that Mongo likes
+        # In-memory duration filtering: if travel_data is missing, we still show the house
+        # unless it explicitly exceeds the duration.
         if max_duration:
-            houses = [h for h in houses if h.get("travel_data", {}).get("duration_minutes", 999) <= max_duration]
+            houses = [h for h in houses if int(h.get("travel_data").get("duration_minutes")) <= max_duration]
             
         for h in houses:
             h["_id"] = str(h["_id"])

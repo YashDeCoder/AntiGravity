@@ -1,7 +1,7 @@
 from funda import Funda
 from funda import Listing
 import json
-
+# TODO: remove max_budget, makes more sense to filter after scraping
 class FundaScraperService:
     def __init__(self, area: str = None, want_to: str = "rent", n_pages: int = 2, max_budget: int = 1250, sort_by: str = "newest"):
         """

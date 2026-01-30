@@ -14,7 +14,7 @@ const App = () => {
   const [maxBudget, setMaxBudget] = useState(1250);
   const [maxDuration, setMaxDuration] = useState(30);
   const [selectedSource, setSelectedSource] = useState('all');
-  const [showBuy, setShowBuy] = useState(false);
+  // const [showBuy, setShowBuy] = useState(false);
   const [address, setAddress] = useState('Hoekenrode 10A, 1101 DT Amsterdam');
 
   const fetchHouses = async () => {
@@ -25,7 +25,7 @@ const App = () => {
           max_budget: maxBudget,
           max_duration: maxDuration > 0 ? maxDuration : null,
           source: selectedSource,
-          show_buy: showBuy,
+          // show_buy: showBuy,
           address: address
         }
       });
@@ -40,7 +40,7 @@ const App = () => {
   const startScrape = async () => {
     setScanning(true);
     try {
-      await axios.post(`http://localhost:8000/scrape?city=amsterdam`);
+      await axios.post(`http://localhost:8000/scrape?target=${encodeURIComponent(address)}`);
       fetchHouses();
     } catch (error) {
       console.error("Error scraping:", error);
@@ -51,7 +51,8 @@ const App = () => {
 
   useEffect(() => {
     fetchHouses();
-  }, [maxBudget, maxDuration, selectedSource, showBuy, address]);
+    // }, [maxBudget, maxDuration, selectedSource, showBuy, address]);
+  }, [maxBudget, maxDuration, selectedSource, address]);
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary flex">
@@ -135,6 +136,7 @@ const App = () => {
                   <option value="Funda">Funda</option>
                   <option value="Verhuurtbeter">Verhuurtbeter</option>
                   <option value="Pararius">Pararius</option>
+                  <option value="Vesteda">Vesteda</option>
                 </select>
               </div>
 
@@ -150,7 +152,7 @@ const App = () => {
                 />
               </div>
 
-              <div className="flex flex-col gap-2 min-w-[150px]">
+              {/* <div className="flex flex-col gap-2 min-w-[150px]">
                 <label className="text-xs font-semibold uppercase tracking-widest text-text-muted flex items-center gap-2">
                   <LayoutGrid size={14} /> Show Buy
                 </label>
@@ -160,7 +162,7 @@ const App = () => {
                   onChange={(e) => setShowBuy(e.target.checked)}
                   className="bg-bg-tertiary text-text-primary text-sm rounded-lg border-none focus:ring-1 focus:ring-accent-primary p-2 cursor-pointer transition-all hover:bg-bg-secondary"
                 />
-              </div>
+              </div> */}
 
               <div className="flex-1" />
 

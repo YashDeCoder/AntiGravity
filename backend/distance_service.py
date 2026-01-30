@@ -19,6 +19,7 @@ def geocode_address(address: str):
     params = {
         "api_key": ORS_API_KEY,
         "text": address,
+        "boundary.country": "NL",
         "size": 1
     }
 
@@ -66,7 +67,7 @@ def get_travel_data(house_lat, house_lon, dest_uic_code=None):
 
     params = {
         "originUicCode": closest_station_uicCode,
-        "destinationUicCode": target_uic,
+        "destinationUicCode": dest_uic_code,
         "dateTime": workday
     }
 
